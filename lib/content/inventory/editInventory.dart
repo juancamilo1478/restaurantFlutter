@@ -144,11 +144,6 @@ class _EditInventoryDialogState extends State<EditInventoryDialog> {
       actions: [
         TextButton(
           onPressed: () async {
-            print(_inputPrice ?? widget.productPrice);
-            print(_inputStore ?? widget.productStore);
-            print(_inputName ?? widget.productName);
-            print(_Selection ?? widget.productType);
-            // Realizar la lógica para cambiar el producto
             final url =
                 Uri.http('localhost:3001', '/products/${widget.productId}');
 

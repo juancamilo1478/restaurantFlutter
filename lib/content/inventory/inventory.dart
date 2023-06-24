@@ -13,37 +13,27 @@ class inventory extends StatefulWidget {
 
 class _inventoryState extends State<inventory> {
   late Future<List<Product>> listProducts;
-  Future<List<Product>> _getProducts() async {
-    final Uri url = Uri.parse('http://localhost:3001/products');
-    final response = await http.get(url);
+  String _search = '';
+  //action refresh data
+  Future<List<Product>> _getProducts(String searchTerm) async {
+    final Uri url =
+        Uri.parse('http://localhost:3001/products?name=$searchTerm');
+    final response = await http.get(
+      url,
+    );
     final List<Product> productos = [];
     if (response.statusCode == 200) {
       String body = utf8.decode(response.bodyBytes);
       final jsonData = jsonDecode(body);
 
       for (var item in jsonData) {
-        productos.add(Product(item['id'], item['type'], item['name'],
-            item['price'].toString(), item['store'].toString()));
-      }
-      return productos;
-    } else {
-      throw Exception("Fallo la petición");
-    }
-  }
-
-  //put product
-  Future<List<Product>> putProduct(BuildContext context, int productId,
-      int productStore, int productPrice, String productCategorie) async {
-    final Uri url = Uri.parse('http://localhost:3001/products');
-    final response = await http.get(url);
-    final List<Product> productos = [];
-    if (response.statusCode == 200) {
-      String body = utf8.decode(response.bodyBytes);
-      final jsonData = jsonDecode(body);
-
-      for (var item in jsonData) {
-        productos.add(Product(item['id'], item['type'], item['name'],
-            item['price'], item['store']));
+        productos.add(Product(
+          item['id'],
+          item['type'],
+          item['name'],
+          item['price'].toString(),
+          item['store'].toString(),
+        ));
       }
       return productos;
     } else {
@@ -54,7 +44,8 @@ class _inventoryState extends State<inventory> {
 // initial state loading all products
   @override
   void initState() {
-    listProducts = _getProducts();
+    _search = '';
+    listProducts = _getProducts(_search);
   }
 
   @override
@@ -62,37 +53,49 @@ class _inventoryState extends State<inventory> {
     return Expanded(
       child: Column(
         children: [
-          addInventory(),
-          Container(
-            height: 500,
-            child: FutureBuilder(
-              future: listProducts,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return DataTable(
-                    columns: [
-                      DataColumn(label: Text('id')),
-                      DataColumn(label: Text('nombre')),
-                      DataColumn(label: Text('inventario')),
-                      DataColumn(label: Text('precio')),
-                      DataColumn(label: Text('Categoria')),
-                      DataColumn(label: Text('editar')),
-                      DataColumn(
-                          label: Row(
-                        children: [Icon(Icons.delete_forever), Text('Borrar')],
-                      )),
-                    ],
-                    rows: _products(snapshot.data ?? []),
-                  );
-                  // Agrega el widget que deseas mostrar aquí
-                } else if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return Text(
-                      "Error al obtener los datos"); // Agrega el widget de error aquí
-                } else {
-                  return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
-                }
-              },
+          addInventory(Refresh: () {
+            setState(() {
+              listProducts = _getProducts(_search);
+            });
+          }, SearchName: (String value) {
+            setState(() {
+              _search = value;
+            });
+          }),
+          Expanded(
+            child: SingleChildScrollView(
+              child: FutureBuilder(
+                future: listProducts,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return DataTable(
+                      columns: [
+                        DataColumn(label: Text('id')),
+                        DataColumn(label: Text('Nombre')),
+                        DataColumn(label: Text('Inventario')),
+                        DataColumn(label: Text('´Precio')),
+                        DataColumn(label: Text('Categoria')),
+                        DataColumn(label: Text('Editar')),
+                        DataColumn(
+                            label: Row(
+                          children: [
+                            Icon(Icons.delete_forever),
+                            Text('Borrar')
+                          ],
+                        )),
+                      ],
+                      rows: _products(snapshot.data ?? []),
+                    );
+                    // Agrega el widget que deseas mostrar aquí
+                  } else if (snapshot.hasError) {
+                    print(snapshot.error);
+                    return Text(
+                        "Error al obtener los datos"); // Agrega el widget de error aquí
+                  } else {
+                    return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
+                  }
+                },
+              ),
             ),
           )
         ],
@@ -121,7 +124,7 @@ class _inventoryState extends State<inventory> {
                 ),
               );
               setState(() {
-                listProducts = _getProducts();
+                listProducts = _getProducts(_search);
               });
             },
             child: Icon(Icons.edit_rounded))),
@@ -133,7 +136,7 @@ class _inventoryState extends State<inventory> {
                     showDeleteProductDialog(context, product.id, product.name),
               );
               setState(() {
-                listProducts = _getProducts();
+                listProducts = _getProducts(_search);
               });
             },
             child: Icon(Icons.disabled_by_default_outlined)))

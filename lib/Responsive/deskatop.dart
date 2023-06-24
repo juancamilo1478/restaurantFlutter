@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/Responsive/table.dart';
 import 'package:flutter_restaurant/constant/constant.dart';
 import 'package:flutter_restaurant/content/inventory/inventory.dart';
-import 'package:flutter_restaurant/content/tablesRestaurant.dart';
+import 'package:flutter_restaurant/content/tables/index.dart';
 import 'package:flutter_restaurant/content/waiters.dart';
 import 'package:flutter_restaurant/content/winnings.dart';
 
@@ -14,12 +15,7 @@ class Deskatop extends StatefulWidget {
 
 class _DeskatopState extends State<Deskatop> {
   int _selectedPage = 1;
-  List<Widget> _pages = [
-    inventory(),
-    tablesRestaurant(),
-    winnings(),
-    waiters()
-  ];
+  List<Widget> _pages = [inventory(), Tables(), winnings(), waiters()];
 
   @override
   Widget build(BuildContext context) {

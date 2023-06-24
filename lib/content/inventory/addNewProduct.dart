@@ -131,6 +131,21 @@ class _EditInventoryDialogState extends State<AddNewProduct> {
                 _inputName != null &&
                 _inputPrice != null &&
                 _inputStore != null) {
+              final url = Uri.http('localhost:3001', '/products');
+
+              final response = await http.post(
+                url,
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode({
+                  'name': _inputName,
+                  'type': _Selection ?? 'widget.productType',
+                  'price': _inputPrice ?? 0,
+                  'store': _inputStore ?? 0,
+                }),
+              );
+              if (response.statusCode == 201) {
+                Navigator.of(context).pop();
+              }
             } else {
               setState(() {
                 _error = "Faltan datos";

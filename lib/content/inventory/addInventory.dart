@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/content/inventory/addNewProduct.dart';
 
 class addInventory extends StatefulWidget {
-  const addInventory({Key? key}) : super(key: key);
+  final Function? Refresh;
+  final Function? SearchName;
+  addInventory({this.Refresh, this.SearchName});
 
   @override
   State<addInventory> createState() => _addInventoryState();
@@ -57,10 +59,12 @@ class _addInventoryState extends State<addInventory> {
                           ),
                           style: TextStyle(color: Colors.white),
                           controller: _controller,
-                          onChanged: (value) {
+                          onChanged: (value) async {
                             setState(() {
                               _inputValue = value;
                             });
+                            await widget.SearchName?.call(value);
+                            widget.Refresh?.call();
                           },
                         ),
                       ),
@@ -100,14 +104,14 @@ class _addInventoryState extends State<addInventory> {
                   ),
                   InkWell(
                     onTap: () {
-                      {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddNewProduct(); // Mostrar el diálogo AddNewProduct
-                          },
-                        );
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AddNewProduct(); // Mostrar el diálogo AddNewProduct
+                        },
+                      ).then((value) {
+                        widget.Refresh?.call();
+                      });
                     },
                     child: Icon(
                       Icons.add_circle,
