@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/models/sectors.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,9 +8,11 @@ import 'dart:convert';
 class EditSector extends StatefulWidget {
   final List<SectorData> sectorsData;
   final int xData;
-  final Function refreh;
-  const EditSector(
-      {required this.sectorsData, required this.xData, this.refreh});
+
+  const EditSector({
+    required this.sectorsData,
+    required this.xData,
+  });
 
   @override
   State<EditSector> createState() => _EditSectorState();
@@ -35,7 +38,11 @@ class _EditSectorState extends State<EditSector> {
 List<Widget> _listTablesData(List<SectorData> data) {
   List<Widget> widgets = [];
   for (var element in data) {
-    widgets.add(OneTable(data: element));
+    widgets.add(
+      OneTable(
+        data: element,
+      ),
+    );
   }
   return widgets;
 }
@@ -43,34 +50,31 @@ List<Widget> _listTablesData(List<SectorData> data) {
 class OneTable extends HookWidget {
   final SectorData data;
 
-  const OneTable({required this.data});
+  const OneTable({
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
     final state = useState(data.state);
     final name = useState(data.name);
     final id = data.id;
+    final category = data.categorie;
     final isHovered = useState(false);
     Widget icon = Icon(
       Icons.table_bar,
-      color: state.value == 'Onn' ? Colors.green : Colors.red,
+      color: state.value == 'On' ? Colors.green : Colors.red,
     );
 
     if (isHovered.value) {
       icon = Tooltip(
         message: 'Estado: ${state.value} Nombre:${data.name}',
-        child: icon, // Cambiado a 'icon' en lugar de 'Icon'
+        child: icon,
       );
     }
     return InkWell(
-      onTap: () {
-        // if (state.value == 'Off') {
-        //   state.value = 'Onn';
-        // } else {
-        //   state.value = 'Off';
-        // }
-
-        showDialog(
+      onTap: () async {
+        await showDialog(
           context: context,
           builder: (BuildContext context) {
             return Dialog(
@@ -79,6 +83,11 @@ class OneTable extends HookWidget {
                 id: id,
                 name: name.value,
                 state: state.value,
+                categorie: category,
+                onDataChanged: (newData) {
+                  name.value = newData.name;
+                  state.value = newData.state;
+                },
               ),
             );
           },
@@ -88,24 +97,30 @@ class OneTable extends HookWidget {
         onEnter: (_) => isHovered.value = true,
         onExit: (_) => isHovered.value = false,
         child: isHovered.value == true
-            ? icon // Cambiado a 'icon' en lugar de 'Icon'
+            ? icon
             : Icon(
                 Icons.table_bar,
-                color: state.value == 'Onn' ? Colors.green : Colors.red,
+                color: state.value == 'On' ? Colors.green : Colors.red,
               ),
       ),
     );
   }
 }
 
-//edid element
 class EditElement extends StatefulWidget {
   final int id;
   final String name;
   final String state;
+  final String categorie;
+  final Function(SectorData) onDataChanged;
 
-  const EditElement(
-      {required this.id, required this.name, required this.state});
+  const EditElement({
+    required this.id,
+    required this.name,
+    required this.state,
+    required this.categorie,
+    required this.onDataChanged,
+  });
 
   @override
   _EditElementState createState() => _EditElementState();
@@ -115,6 +130,7 @@ class _EditElementState extends State<EditElement> {
   TextEditingController _nameController = TextEditingController();
   String? _selectedState;
   String? _name;
+  String? _categorie;
 
   @override
   void initState() {
@@ -140,7 +156,6 @@ class _EditElementState extends State<EditElement> {
                   controller: _nameController,
                   onChanged: (value) {
                     setState(() {
-                      // Actualizar el valor del nombre
                       _name = value;
                     });
                   },
@@ -177,7 +192,6 @@ class _EditElementState extends State<EditElement> {
       actions: [
         TextButton(
           onPressed: () async {
-            // Acciones para guardar los cambios
             if (_selectedState != widget.state || _name != widget.name) {
               final url = Uri.http('localhost:3001', '/tables');
 
@@ -191,29 +205,24 @@ class _EditElementState extends State<EditElement> {
                 }),
               );
               if (response.statusCode == 201) {
-                print('YA');
+                widget.onDataChanged(SectorData(
+                    widget.id,
+                    _selectedState ?? widget.state,
+                    _name ?? widget.name,
+                    widget.categorie));
+                Navigator.of(context).pop();
               } else {
-                // Fluttertoast.showToast(
-                //   msg: 'Error al cambiar el producto',
-                //   toastLength: Toast.LENGTH_SHORT,
-                //   gravity: ToastGravity.BOTTOM,
-                //   backgroundColor: Colors.black87,
-                //   textColor: Colors.white,
-                //   timeInSecForIosWeb: 2,
-                // );
+                print(response.body);
                 Navigator.of(context).pop();
               }
             } else {
               Navigator.of(context).pop();
             }
-
-            Navigator.of(context).pop();
           },
           child: Text('Guardar'),
         ),
         TextButton(
           onPressed: () {
-            // Acciones para cancelar los cambios
             Navigator.of(context).pop();
           },
           child: Text('Cancelar'),

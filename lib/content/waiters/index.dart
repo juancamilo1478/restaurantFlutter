@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/content/waiters/listWaiters.dart';
 
 class waiters extends StatefulWidget {
   const waiters({super.key});
@@ -11,8 +12,10 @@ class _waitersState extends State<waiters> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        color: Colors.yellow,
+      child: ListView(
+        children: [
+          ListWaiters(),
+        ],
       ),
     );
   }

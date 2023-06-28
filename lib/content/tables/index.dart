@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_restaurant/content/tables/tablesList.dart';
 
 class Tables extends StatefulWidget {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_restaurant/content/tables/DeleteSector.dart';
 import 'package:flutter_restaurant/content/tables/createSector.dart';
 import 'package:flutter_restaurant/content/tables/edidSector.dart';
 import 'package:flutter_restaurant/models/sectors.dart';
 import 'package:flutter_restaurant/models/selectorSector.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class datasTables extends StatefulWidget {
@@ -57,7 +59,7 @@ class _datasTablesState extends State<datasTables> {
   }
 
 //sectors action
-  Future<List<selectorSector>> _getAllSectors() async {
+  Future<List<selectorSector>> getAllSectors() async {
     final Uri url = Uri.parse('http://localhost:3001/sectors');
     final response = await http.get(
       url,
@@ -86,13 +88,14 @@ class _datasTablesState extends State<datasTables> {
   void initState() {
     _inputValue = '';
     listTables = _getSectors(_inputValue ?? '');
-    listSectors = _getAllSectors();
+    listSectors = getAllSectors();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        //////////////////////////////////controller filters/////////////////////////////////
         Container(
           color: const Color.fromARGB(255, 52, 53, 53),
           child: Row(
@@ -136,6 +139,7 @@ class _datasTablesState extends State<datasTables> {
                   },
                 ),
               ),
+              /////////////////////////////create zones///////////////////////////
               Container(
                 height: 50,
                 color: const Color.fromARGB(255, 52, 53, 53),
@@ -170,6 +174,7 @@ class _datasTablesState extends State<datasTables> {
             ],
           ),
         ),
+        ///////////////////////list zones//////////////////////
         Container(
           padding: EdgeInsets.all(100),
           child: FutureBuilder<List<Sectors>>(
@@ -188,7 +193,7 @@ class _datasTablesState extends State<datasTables> {
                     if (sector.data.isNotEmpty) {
                       sectorCards.add(
                         Card(
-                          color: Color.fromARGB(177, 17, 85, 233),
+                          color: Color.fromARGB(176, 60, 61, 63),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -214,20 +219,36 @@ class _datasTablesState extends State<datasTables> {
                                             context: context,
                                             builder: (BuildContext context) =>
                                                 EditSector(
-                                              sectorsData:
-                                                  snapshot.data![index].data,
-                                              xData: sector.x,
-                                            ),
+                                                    sectorsData: snapshot
+                                                        .data![index].data,
+                                                    xData: sector.x),
                                           );
+                                          setState(() {
+                                            listTables =
+                                                _getSectors(_inputValue ?? '');
+                                            listSectors = getAllSectors();
+                                          });
                                         },
                                         child: Icon(Icons.edit_rounded)),
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    )
+                                    InkWell(
+                                        onTap: () async {
+                                          await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  DeleteSector(
+                                                      context,
+                                                      sector
+                                                          .data[0].categorie));
+                                          setState(() {
+                                            listTables =
+                                                _getSectors(_inputValue ?? '');
+                                            listSectors = getAllSectors();
+                                          });
+                                        },
+                                        child: Icon(Icons.delete))
                                   ],
                                 ),
                               ),
@@ -260,6 +281,7 @@ class _datasTablesState extends State<datasTables> {
     );
   }
 
+  /// list zones////
   List<Widget> _listTablesSectors(List<Sectors> data) {
     List<Widget> _tables = [];
     for (var element in data) {
@@ -275,6 +297,7 @@ class _datasTablesState extends State<datasTables> {
     return _tables;
   }
 
+/////////filter options////////////////
   List<DropdownMenuItem<String>> _listSectors(List<selectorSector> data) {
     List<DropdownMenuItem<String>> sector = [];
     sector.add(DropdownMenuItem(
@@ -298,14 +321,58 @@ class _datasTablesState extends State<datasTables> {
     return sector;
   }
 
+/////////// One zone
+
   List<Widget> _listTablesDatas(List<SectorData> data) {
     List<Widget> _datas = [];
+
     for (var element in data) {
-      _datas.add(Icon(
-        Icons.table_bar,
-        color: Colors.white,
-      ));
+      _datas.add(OneTables(data: element));
     }
+
     return _datas;
+  }
+}
+
+class OneTables extends HookWidget {
+  final SectorData data;
+
+  const OneTables({
+    required this.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isHovered = useState(false);
+    final _state = useState(data.state);
+    final _name = useState(data.name);
+
+    Widget icon = Icon(
+      Icons.table_bar,
+      color: _state.value == 'On' ? Colors.green : Colors.transparent,
+    );
+
+    if (isHovered.value) {
+      icon = Tooltip(
+        message: 'Estado: ${_state.value}   Nombre: ${_name.value}',
+        child: icon,
+      );
+    }
+
+    return InkWell(
+      onTap: () async {
+        // Maneja el evento onTap según tus necesidades
+      },
+      child: MouseRegion(
+        onEnter: (_) => isHovered.value = true,
+        onExit: (_) => isHovered.value = false,
+        child: isHovered.value
+            ? icon
+            : Icon(
+                Icons.table_bar,
+                color: _state.value == 'On' ? Colors.green : Colors.transparent,
+              ),
+      ),
+    );
   }
 }

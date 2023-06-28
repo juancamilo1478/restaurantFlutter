@@ -123,9 +123,6 @@ class _inventoryState extends State<inventory> {
                   productStore: product.inventory,
                 ),
               );
-              setState(() {
-                listProducts = _getProducts(_search);
-              });
             },
             child: Icon(Icons.edit_rounded))),
         DataCell(InkWell(
