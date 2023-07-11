@@ -88,6 +88,9 @@ class _ListWaitersState extends State<ListWaiters> {
                     context: context,
                     builder: (BuildContext dialogContext) => AddWaiters(),
                   );
+                  setState(() {
+                    _listWaiters = getWaiters(search);
+                  });
                 },
                 child: Icon(Icons.group_add),
               )

@@ -10,11 +10,12 @@ class SectorData {
   String state;
   String name;
   String categorie;
-
+  int? accountId;
   SectorData(
     this.id,
     this.state,
     this.name,
     this.categorie,
+    this.accountId,
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_restaurant/models/sectors.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
@@ -152,8 +153,11 @@ class _EditElementState extends State<EditElement> {
               SizedBox(width: 10),
               Expanded(
                 child: TextField(
-                  maxLength: 30,
+                  maxLength: 2,
                   controller: _nameController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   onChanged: (value) {
                     setState(() {
                       _name = value;
@@ -209,7 +213,8 @@ class _EditElementState extends State<EditElement> {
                     widget.id,
                     _selectedState ?? widget.state,
                     _name ?? widget.name,
-                    widget.categorie));
+                    widget.categorie,
+                    1));
                 Navigator.of(context).pop();
               } else {
                 print(response.body);
