@@ -4,16 +4,16 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 
-void printAccount(BuildContext context) async {
+void printAccount(BuildContext context, AccountModel data) async {
   final pdf = pw.Document();
 
+  final image = await imageFromAssetBundle('assets/images/logo1.png');
   pdf.addPage(
     pw.Page(
       build: (pw.Context context) {
-        return pw.Center(
-          child: pw.Text('Hola Mundo', style: pw.TextStyle(fontSize: 24)),
-        );
+        return buildprintData(image, data.products);
       },
+      pageFormat: PdfPageFormat(130.0, double.infinity),
     ),
   );
 
@@ -23,8 +23,8 @@ void printAccount(BuildContext context) async {
     context: context,
     builder: (_) => AlertDialog(
       content: Container(
-        width: 300,
-        height: 400,
+        width: 600,
+        height: 600,
         child: PdfPreview(
           build: (_) => pdfBytes,
         ),
@@ -38,8 +38,15 @@ void printAccount(BuildContext context) async {
         ),
         ElevatedButton(
           onPressed: () async {
+            final PdfPageFormat pageFormat =
+                PdfPageFormat(58.0, double.infinity);
+
             await Printing.layoutPdf(
-              onLayout: (PdfPageFormat format) async => pdfBytes,
+              format: pageFormat,
+              onLayout: (PdfPageFormat format) async {
+                return pdfBytes;
+              },
+              usePrinterSettings: true,
             );
           },
           child: Text('Imprimir'),
@@ -49,84 +56,177 @@ void printAccount(BuildContext context) async {
   );
 }
 
-void main() {
-  runApp(MyApp());
-}
+pw.Widget buildprintData(image, List<ProductAccount> datas) {
+  int total = 0;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PDF Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('PDF Example'),
-        ),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              printAccount(context);
-            },
-            child: Text('Generar y previsualizar PDF'),
-          ),
-        ),
-      ),
-    );
+  for (var product in datas) {
+    total += (product.price * product.quantity);
   }
-}
 
-buildprintData(image, List<ProductAccount> datas) => pw.Padding(
-    padding: const pw.EdgeInsets.all(25),
-    child: pw.Column(children: [
-      pw.Text('cuenta'),
-      pw.SizedBox(height: 10.0),
-      pw.Divider(),
-      pw.Align(
-          alignment: pw.Alignment.topRight,
-          child: pw.Image(image, width: 250, height: 250)),
-      pw.Table(
-        border: pw.TableBorder.all(width: 1),
-        children: [
-          pw.TableRow(children: [
-            pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text('Nombre',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-            pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text('cantidad',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-            pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text('Precio',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-            pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text('Total',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))
-          ]),
-          for (var product in datas)
-            pw.TableRow(children: [
-              pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text(product.name),
+  final fontSize = 6.0; // Tamaño de fuente predefinido
+  final paddingHorizontal = 10.0;
+  return pw.Center(
+    child: pw.Column(
+      children: [
+        pw.Text('cuenta numero x', style: pw.TextStyle(fontSize: fontSize)),
+        pw.SizedBox(height: 10.0),
+        pw.Divider(),
+        pw.Align(
+          alignment: pw.Alignment.topCenter,
+          child: pw.Image(image, width: 130, height: 200),
+        ),
+        pw.Table(
+          tableWidth: pw.TableWidth.max,
+          columnWidths: {
+            0: pw.FixedColumnWidth(50), // Ancho fijo para la primera columna
+            1: pw.FixedColumnWidth(20), // Ancho fijo para la segunda columna
+            2: pw.FixedColumnWidth(30), // Ancho fijo para la tercera columna
+            3: pw.FlexColumnWidth(60), // Ancho flexible para la última columna
+          },
+          border: pw.TableBorder.all(width: 1),
+          children: [
+            pw.TableRow(
+              children: [
+                pw.Container(
+                  color: PdfColor.fromHex('#000000'),
+                  alignment: pw.Alignment.center,
+                  child: pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(
+                          horizontal: paddingHorizontal),
+                      child: pw.SizedBox(
+                        height: 12,
+                        child: pw.Center(
+                            child: pw.Text(
+                          'Nombre',
+                          style: pw.TextStyle(
+                            color: PdfColor.fromHex('#ffffff'),
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: fontSize,
+                          ),
+                        )),
+                      )),
+                ),
+                pw.Container(
+                  color: PdfColor.fromHex('#000000'),
+                  alignment: pw.Alignment.center,
+                  child: pw.Padding(
+                      padding: pw.EdgeInsets.symmetric(
+                          horizontal: paddingHorizontal),
+                      child: pw.SizedBox(
+                        height: 12,
+                        child: pw.Center(
+                            child: pw.Text(
+                          '#',
+                          style: pw.TextStyle(
+                            color: PdfColor.fromHex('#ffffff'),
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: fontSize,
+                          ),
+                        )),
+                      )),
+                ),
+                pw.Container(
+                  height: 12,
+                  color: PdfColor.fromHex('#000000'),
+                  alignment: pw.Alignment.center,
+                  child: pw.Center(
+                      child: pw.Text(
+                    'Precio',
+                    style: pw.TextStyle(
+                      color: PdfColor.fromHex('#ffffff'),
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: fontSize * 0.8,
+                    ),
+                  )),
+                ),
+                pw.Container(
+                  height: 12,
+                  color: PdfColor.fromHex('#000000'),
+                  alignment: pw.Alignment.center,
+                  child: pw.Center(
+                      child: pw.Text(
+                    'Total',
+                    style: pw.TextStyle(
+                      color: PdfColor.fromHex('#ffffff'),
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: fontSize * 0.8,
+                    ),
+                  )),
+                ),
+              ],
+            ),
+            for (var product in datas)
+              pw.TableRow(
+                children: [
+                  pw.Container(
+                    height: 12,
+                    alignment: pw.Alignment.center,
+                    child: pw.Center(
+                        child: pw.Text(
+                      product.name,
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: fontSize * 0.8,
+                      ),
+                    )),
+                  ),
+                  pw.Container(
+                      height: 12,
+                      alignment: pw.Alignment.center,
+                      child: pw.Center(
+                        child: pw.Text(
+                          product.quantity.toString(),
+                          style: pw.TextStyle(fontSize: fontSize),
+                        ),
+                      )),
+                  pw.Container(
+                      height: 12,
+                      alignment: pw.Alignment.center,
+                      child: pw.Center(
+                        child: pw.Text(
+                          product.price.toString(),
+                          style: pw.TextStyle(fontSize: fontSize),
+                        ),
+                      )),
+                  pw.Container(
+                      height: 12,
+                      alignment: pw.Alignment.center,
+                      child: pw.Center(
+                        child: pw.Text(
+                          (product.price * product.quantity).toString(),
+                          style: pw.TextStyle(fontSize: fontSize),
+                        ),
+                      )),
+                ],
               ),
-              pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text(product.quantity.toString()),
+          ],
+        ),
+        pw.Table(tableWidth: pw.TableWidth.max, children: [
+          pw.TableRow(
+            children: [
+              pw.Center(
+                child: pw.Text(
+                  'Total:',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 2,
+                  ),
+                ),
               ),
-              pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text(product.price.toString()),
+              pw.Container(
+                alignment: pw.Alignment.topRight,
+                child: pw.Text(
+                  total.toString(),
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 2,
+                  ),
+                ),
               ),
-              pw.Padding(
-                padding: pw.EdgeInsets.all(5),
-                child: pw.Text((product.price * product.quantity).toString()),
-              )
-            ])
-        ],
-      ),
-    ]));
+            ],
+          ),
+        ])
+      ],
+    ),
+  );
+}

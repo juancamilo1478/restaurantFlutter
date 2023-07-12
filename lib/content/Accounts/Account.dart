@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_restaurant/content/Accounts/AddProductAccount.dart';
+import 'package:flutter_restaurant/content/Accounts/EdidAcount.dart';
 import 'package:flutter_restaurant/models/Account.dart';
 import 'package:flutter_restaurant/models/waiters.dart';
 import 'package:flutter_restaurant/services/printAccount.dart';
@@ -221,8 +222,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
                 onPressed: () {
                   // String? direction = await selectFolder();
-
-                  printAccount(context);
+                  printAccount(context, account);
                 },
               ),
               TextButton(
@@ -252,10 +252,24 @@ class _AccountScreenState extends State<AccountScreen> {
                 SizedBox(width: 5),
                 InkWell(
                   onTap: () async {
-                    // Lógica para editar el producto
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return EditDialog(
+                          initialQuantity: product.quantity,
+                          nameProduct: product.name,
+                          idAccount: widget.accountId,
+                          idProduct: product.id,
+                        );
+                      },
+                    ).then((value) {
+                      setState(() {
+                        accountTable = getAccount(widget.accountId);
+                      });
+                    });
                   },
                   child: Icon(Icons.edit, size: 20),
-                ),
+                )
               ],
             ),
           ),
