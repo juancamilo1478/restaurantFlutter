@@ -159,7 +159,7 @@ class _addProductAccountstate extends State<addProductAccount> {
         DataCell(Text(product.type)),
         DataCell(InkWell(
             onTap: () async {
-              _addProduct(product.id);
+              await _addProduct(product.id);
               Navigator.of(context).pop();
             },
             child: Icon(Icons.add_circle_outline_sharp))),

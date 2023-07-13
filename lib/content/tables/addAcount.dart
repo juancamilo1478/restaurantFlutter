@@ -150,7 +150,7 @@ class _AddAccountState extends State<AddAccount> {
                         width: 10,
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           createAccount(element.id);
                         },
                         child: Icon(

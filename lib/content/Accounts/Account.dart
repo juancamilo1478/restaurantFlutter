@@ -144,7 +144,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Text('agregar Productos  '),
                 InkWell(
                   onTap: () async {
-                    await showDialog(
+                    final account = await showDialog(
                       context: context,
                       builder: (BuildContext context) =>
                           FutureBuilder<AccountModel>(
