@@ -357,7 +357,10 @@ class OneTables extends HookWidget {
           await showDialog(
               context: context,
               builder: (BuildContext dialogContext) => AccountScreen(
-                  accountId: data.accountId!, nameTable: data.name));
+                    accountId: data.accountId!,
+                    nameTable: data.name,
+                    nameSector: data.categorie,
+                  ));
         }
       },
       child: Center(

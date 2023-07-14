@@ -4,14 +4,16 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 
-void printAccount(BuildContext context, AccountModel data) async {
+void printAccount(BuildContext context, AccountModel data, num porcent,
+    String nameTable, int idAccount) async {
   final pdf = pw.Document();
 
   final image = await imageFromAssetBundle('assets/images/logo1.png');
   pdf.addPage(
     pw.Page(
       build: (pw.Context context) {
-        return buildprintData(image, data.products);
+        return buildprintData(
+            image, data.products, porcent, nameTable, idAccount);
       },
       pageFormat: PdfPageFormat(130.0, double.infinity),
     ),
@@ -56,7 +58,8 @@ void printAccount(BuildContext context, AccountModel data) async {
   );
 }
 
-pw.Widget buildprintData(image, List<ProductAccount> datas) {
+pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
+    String nametable, int idAccount) {
   int total = 0;
 
   for (var product in datas) {
@@ -68,7 +71,8 @@ pw.Widget buildprintData(image, List<ProductAccount> datas) {
   return pw.Center(
     child: pw.Column(
       children: [
-        pw.Text('cuenta numero x', style: pw.TextStyle(fontSize: fontSize)),
+        pw.Text('Mesa $nametable #$idAccount',
+            style: pw.TextStyle(fontSize: fontSize)),
         pw.SizedBox(height: 10.0),
         pw.Divider(),
         pw.Align(
@@ -204,7 +208,9 @@ pw.Widget buildprintData(image, List<ProductAccount> datas) {
         pw.Table(tableWidth: pw.TableWidth.max, children: [
           pw.TableRow(
             children: [
-              pw.Center(
+              pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
                 child: pw.Text(
                   'Total:',
                   style: pw.TextStyle(
@@ -214,12 +220,65 @@ pw.Widget buildprintData(image, List<ProductAccount> datas) {
                 ),
               ),
               pw.Container(
-                alignment: pw.Alignment.topRight,
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
                 child: pw.Text(
                   total.toString(),
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
                     fontSize: fontSize * 2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          pw.TableRow(
+            children: [
+              pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
+                child: pw.Text(
+                  'Propina voluntaria $porcent %:',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 1,
+                  ),
+                ),
+              ),
+              pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
+                child: pw.Text(
+                  (total * (porcent / 100)).toString(),
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          pw.TableRow(
+            children: [
+              pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
+                child: pw.Text(
+                  'Total+propina:',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 1,
+                  ),
+                ),
+              ),
+              pw.Container(
+                alignment: pw.Alignment.bottomCenter,
+                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
+                child: pw.Text(
+                  (total + (total * (porcent / 100))).toString(),
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: fontSize * 1.8,
                   ),
                 ),
               ),
