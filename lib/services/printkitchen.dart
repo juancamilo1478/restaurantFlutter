@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/models/Account.dart';
+import 'package:flutter_restaurant/models/waiters.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 
 void printKitchen(BuildContext context, List<ProductAccount> data,
-    String nameTable, String nameSector) async {
+    String nameTable, String nameSector, WaiterModel waiter) async {
   final pdf = pw.Document();
 
   final image = await imageFromAssetBundle('assets/images/logo1.png');
   pdf.addPage(
     pw.Page(
       build: (pw.Context context) {
-        return buildprintkitchen(image, data, nameTable, nameSector);
+        return buildprintkitchen(
+            image, data, nameTable, nameSector, waiter.name);
       },
       pageFormat: PdfPageFormat(130.0, double.infinity),
     ),
@@ -57,8 +59,8 @@ void printKitchen(BuildContext context, List<ProductAccount> data,
   );
 }
 
-pw.Widget buildprintkitchen(
-    image, List<ProductAccount> datas, String nametable, String Sector) {
+pw.Widget buildprintkitchen(image, List<ProductAccount> datas, String nametable,
+    String Sector, String nameWaiter) {
   final fontSize = 12.0; // Tamaño de fuente predefinido
   final paddingHorizontal = 20.0;
   DateTime now = DateTime.now();
@@ -79,6 +81,13 @@ pw.Widget buildprintkitchen(
               child: pw.FittedBox(
                 fit: pw.BoxFit.scaleDown,
                 child: pw.Text('Hora impreso $time',
+                    style: pw.TextStyle(fontSize: fontSize * 0.8)),
+              )),
+          pw.Container(
+              constraints: pw.BoxConstraints(maxWidth: 160),
+              child: pw.FittedBox(
+                fit: pw.BoxFit.scaleDown,
+                child: pw.Text('$nameWaiter',
                     style: pw.TextStyle(fontSize: fontSize * 0.8)),
               )),
         ]),

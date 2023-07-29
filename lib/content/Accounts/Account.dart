@@ -4,8 +4,10 @@ import 'package:flutter_restaurant/content/Accounts/AddProductAccount.dart';
 import 'package:flutter_restaurant/content/Accounts/DeleteProductAcount.dart';
 import 'package:flutter_restaurant/content/Accounts/EdidAcount.dart';
 import 'package:flutter_restaurant/content/Accounts/kitchen.dart';
+import 'package:flutter_restaurant/content/Accounts/pay.dart';
 import 'package:flutter_restaurant/models/Account.dart';
 import 'package:flutter_restaurant/models/waiters.dart';
+import 'package:flutter_restaurant/services/FinishAccount.dart';
 import 'package:flutter_restaurant/services/printAccount.dart';
 import 'package:flutter_restaurant/services/printkitchen.dart';
 import 'package:http/http.dart' as http;
@@ -29,14 +31,13 @@ class _AccountScreenState extends State<AccountScreen> {
   late Future<WaiterModel> _Waiter;
   String direction = '';
   num _total = 0;
-
   num propine = 0;
   num totalAddPropine = 0;
   TextEditingController propineController =
       TextEditingController(text: (0).toString());
-  num percent = 5;
+  num percent = 0;
   TextEditingController percentController =
-      TextEditingController(text: 5.toString());
+      TextEditingController(text: 0.toString());
   Future<AccountModel> getAccount(int idAccount) async {
     final Uri url =
         Uri.parse('http://localhost:3001/accounts/product/$idAccount');
@@ -242,11 +243,13 @@ class _AccountScreenState extends State<AccountScreen> {
                         builder: (context) => kitchen(data: account.products),
                       ),
                     );
+                    final waiter = await getWaiter(account.waitersId);
                     printKitchen(
                       context,
                       result,
                       widget.nameTable,
                       widget.nameSector,
+                      waiter,
                     );
                   },
                 ),
@@ -265,6 +268,34 @@ class _AccountScreenState extends State<AccountScreen> {
                     // String? direction = await selectFolder();
                     printAccount(context, account, percent, widget.nameSector,
                         widget.accountId);
+                  },
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.monetization_on_outlined),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text('Pago'),
+                    ],
+                  ),
+                  onPressed: () async {
+                    print(account.tableId);
+                    final Result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => pay(),
+                        ));
+                    final stateFinish = await finishAccount(
+                        widget.accountId, account.tableId, Result, propine);
+                    if (stateFinish == 'Completado') {
+                      Navigator.of(context).pop();
+                    } else {}
                   },
                 ),
                 TextButton(
@@ -288,9 +319,11 @@ class _AccountScreenState extends State<AccountScreen> {
       for (var data in products) {
         _total = (data.price * data.quantity) + _total;
       }
-      propine = 0;
-      propineController.text = (_total * (percent / 100)).toString();
-      propine = (_total * (percent / 100));
+
+      initState() {
+        propineController.text = (_total * (percent / 100)).toString();
+      }
+
       totalAddPropine = (_total * (percent / 100)) + _total;
       return DataRow(
         cells: [
@@ -373,6 +406,7 @@ class _AccountScreenState extends State<AccountScreen> {
               setState(() {
                 percent = num.parse(value);
                 propineController.text = (_total * (percent / 100)).toString();
+                propine = _total * (percent / 100);
               });
             },
           )),
@@ -383,10 +417,13 @@ class _AccountScreenState extends State<AccountScreen> {
             ],
             controller: propineController,
             onChanged: (value) {
-              percentController.text =
-                  ((num.parse(value) * 100) / (_total)).toString();
-              propine = num.parse(value);
-              percent = ((num.parse(value) * 100) / (_total));
+              setState(() {
+                percentController.text =
+                    ((num.parse(value) * 100) / (_total)).toString();
+                // propine = num.parse(value);
+                percent = ((num.parse(value) * 100) / (_total));
+                propine = num.parse(value);
+              });
             },
           )),
           // DataCell(Text((_total * (percent / 100)).toString())),
@@ -394,7 +431,6 @@ class _AccountScreenState extends State<AccountScreen> {
         ],
       ),
     );
-    // Agregar fila adicional al final del mapa
 
     rows.add(
       DataRow(

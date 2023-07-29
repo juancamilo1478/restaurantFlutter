@@ -4,7 +4,7 @@ import 'package:flutter_restaurant/constant/constant.dart';
 import 'package:flutter_restaurant/content/inventory/inventory.dart';
 import 'package:flutter_restaurant/content/tables/index.dart';
 import 'package:flutter_restaurant/content/waiters/index.dart';
-import 'package:flutter_restaurant/content/winnings.dart';
+import 'package:flutter_restaurant/content/total/winnings.dart';
 
 class Deskatop extends StatefulWidget {
   const Deskatop({Key? key}) : super(key: key);
