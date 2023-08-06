@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_restaurant/content/Accounts/AddProductAccount.dart';
+import 'package:flutter_restaurant/content/Accounts/AlertMensaje.dart';
 import 'package:flutter_restaurant/content/Accounts/DeleteProductAcount.dart';
 import 'package:flutter_restaurant/content/Accounts/EdidAcount.dart';
 import 'package:flutter_restaurant/content/Accounts/kitchen.dart';
 import 'package:flutter_restaurant/content/Accounts/pay.dart';
 import 'package:flutter_restaurant/models/Account.dart';
 import 'package:flutter_restaurant/models/waiters.dart';
+import 'package:flutter_restaurant/services/CancelAccount.dart';
 import 'package:flutter_restaurant/services/FinishAccount.dart';
 import 'package:flutter_restaurant/services/printAccount.dart';
 import 'package:flutter_restaurant/services/printkitchen.dart';
@@ -225,6 +227,55 @@ class _AccountScreenState extends State<AccountScreen> {
                 rows: _products(account!.products),
               ),
               actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Cambia el color aquí
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.delete_forever_sharp),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text('Anular'),
+                    ],
+                  ),
+                  onPressed: () async {
+                    print(account.tableId);
+                    final Result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ALertMensaje(
+                                initialValue:
+                                    "Estas seguro de Borrar esta cuenta")));
+
+                    if (Result == true) {
+                      final canceledResult = await CanceledAccount(
+                          widget.accountId, account.tableId);
+                      if (canceledResult == 'Cuenta cancelada con éxito.') {
+                        Navigator.of(context).pop();
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Error "),
+                                content: Text(canceledResult),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Ok"),
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                    }
+                  },
+                ),
                 ElevatedButton(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

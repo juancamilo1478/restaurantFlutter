@@ -159,18 +159,9 @@ class _EditInventoryDialogState extends State<EditInventoryDialog> {
             );
 
             if (response.statusCode == 200) {
-              print('YA');
               messageFinish();
-              // Navigator.of(context).pop();
+              Navigator.of(context).pop();
             } else {
-              // Fluttertoast.showToast(
-              //   msg: 'Error al cambiar el producto',
-              //   toastLength: Toast.LENGTH_SHORT,
-              //   gravity: ToastGravity.BOTTOM,
-              //   backgroundColor: Colors.black87,
-              //   textColor: Colors.white,
-              //   timeInSecForIosWeb: 2,
-              // );
               Navigator.of(context).pop();
             }
           },

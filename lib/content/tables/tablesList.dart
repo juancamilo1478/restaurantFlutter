@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_restaurant/content/Accounts/Account.dart';
 import 'package:flutter_restaurant/content/tables/DeleteSector.dart';
-import 'package:flutter_restaurant/content/tables/addAcount.dart';
+import 'package:flutter_restaurant/content/tables/TableSelect.dart';
 import 'package:flutter_restaurant/content/tables/createSector.dart';
 import 'package:flutter_restaurant/content/tables/edidSector.dart';
 import 'package:flutter_restaurant/models/sectors.dart';
 import 'package:flutter_restaurant/models/selectorSector.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:flutter_hooks/flutter_hooks.dart';
 
 class datasTables extends StatefulWidget {
   @override
@@ -152,13 +149,17 @@ class _datasTablesState extends State<datasTables> {
                         width: 10,
                       ),
                       InkWell(
-                        onTap: () {
-                          showDialog(
+                        onTap: () async {
+                          await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return CreateSectorDialog();
                             },
                           );
+                          setState(() {
+                            listTables = _getSectors(_inputValue ?? '');
+                            listSectors = getAllSectors();
+                          });
                         },
                         child: Icon(
                           Icons.add_circle,
@@ -255,7 +256,13 @@ class _datasTablesState extends State<datasTables> {
                                 width: 400,
                                 child: GridView.count(
                                   crossAxisCount: sector.x,
-                                  children: _listTablesDatas(sector.data),
+                                  children: _listTablesDatas(sector.data, () {
+                                    setState(() {
+                                      listTables =
+                                          _getSectors(_inputValue ?? '');
+                                      listSectors = getAllSectors();
+                                    });
+                                  }),
                                 ),
                               ),
                             ],
@@ -279,24 +286,10 @@ class _datasTablesState extends State<datasTables> {
     );
   }
 
-  /// list zones////
-  List<Widget> _listTablesSectors(List<Sectors> data) {
-    List<Widget> _tables = [];
-    for (var element in data) {
-      if (element.data.isNotEmpty) {
-        _tables.add(
-          GridView.count(
-            crossAxisCount: element.x,
-            children: _listTablesDatas(element.data),
-          ),
-        );
-      }
-    }
-    return _tables;
-  }
-
 /////////filter options////////////////
-  List<DropdownMenuItem<String>> _listSectors(List<selectorSector> data) {
+  List<DropdownMenuItem<String>> _listSectors(
+    List<selectorSector> data,
+  ) {
     List<DropdownMenuItem<String>> sector = [];
     sector.add(DropdownMenuItem(
       child: Text(
@@ -305,7 +298,6 @@ class _datasTablesState extends State<datasTables> {
       ),
       value: '',
     ));
-
     for (var section in data) {
       sector.add(DropdownMenuItem(
         value: section.name,
@@ -318,95 +310,13 @@ class _datasTablesState extends State<datasTables> {
 
     return sector;
   }
+  //listTables
 
-/////////// One zone
-
-  List<Widget> _listTablesDatas(List<SectorData> data) {
+  List<Widget> _listTablesDatas(List<SectorData> data, Function() refresh) {
     List<Widget> _datas = [];
-
     for (var element in data) {
-      _datas.add(OneTables(data: element));
+      _datas.add(TableSelect(data: element, refresh: refresh));
     }
-
     return _datas;
-  }
-}
-
-class OneTables extends HookWidget {
-  final SectorData data;
-
-  const OneTables({
-    required this.data,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isHovered = useState(false);
-    final _state = useState(data.state);
-    final _name = useState(data.name);
-
-    Widget icon = InkWell(
-      onTap: () async {
-        if (_state.value == 'On') {
-          await showDialog(
-              context: context,
-              builder: (BuildContext dialogContext) =>
-                  AddAccount(idTable: data.id));
-        }
-        if (_state.value == 'Occupied') {
-          await showDialog(
-              context: context,
-              builder: (BuildContext dialogContext) => AccountScreen(
-                    accountId: data.accountId!,
-                    nameTable: data.name,
-                    nameSector: data.categorie,
-                  ));
-        }
-      },
-      child: Center(
-        child: Text(
-          _name.value,
-          style: TextStyle(
-            fontSize: 40,
-            color: _state.value == 'On'
-                ? Colors.green
-                : _state.value == 'Occupied'
-                    ? Colors.orange
-                    : Colors.transparent,
-          ),
-        ),
-      ),
-    );
-
-    if (isHovered.value && _state.value == 'On' || _state.value == 'Occupied') {
-      icon = Tooltip(
-        message: 'Estado: ${_state.value}   Nombre: ${_name.value}',
-        child: icon,
-      );
-    }
-
-    return InkWell(
-      onTap: () async {
-        // Maneja el evento onTap según tus necesidades
-      },
-      child: MouseRegion(
-          onEnter: (_) => isHovered.value = true,
-          onExit: (_) => isHovered.value = false,
-          child: isHovered.value
-              ? icon
-              : Center(
-                  child: Text(
-                    _name.value,
-                    style: TextStyle(
-                      fontSize: 40,
-                      color: _state.value == 'On'
-                          ? Colors.green
-                          : _state.value == 'Occupied'
-                              ? Colors.orange
-                              : Colors.transparent,
-                    ),
-                  ),
-                )),
-    );
   }
 }

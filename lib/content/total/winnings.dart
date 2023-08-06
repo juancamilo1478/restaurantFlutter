@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/models/total.dart';
+import 'package:flutter_restaurant/services/printTotalDay.dart';
 import 'package:http/http.dart' as http;
 
 class winnings extends StatefulWidget {
@@ -57,6 +58,23 @@ class _winningsState extends State<winnings> {
               'Fecha : ${selectedDate != null ? selectedDate.toString() : "Sin seleccionar"}',
             ),
             if (listWidyed.isNotEmpty) ...listWidyed,
+            if (listWidyed.isNotEmpty)
+              SizedBox(
+                height: 200.0,
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (listWidyed.isNotEmpty && totalDatas != null) {
+                        printDay(context, totalDatas!,
+                            '${selectedDate!.year}/${selectedDate!.month}/${selectedDate!.day}');
+                      } else {
+                        // Mostrar un mensaje o realizar alguna otra acción si no se cumplen las condiciones.
+                      }
+                    },
+                    child: Text('Imprimir'),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

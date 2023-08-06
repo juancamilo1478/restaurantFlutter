@@ -39,3 +39,21 @@ class AccountModel {
     required this.products,
   });
 }
+
+class AccountBasic {
+  int id;
+  String total;
+  String date;
+  String state;
+  String propine;
+  int waitersId;
+  int tableId;
+  AccountBasic(
+      {required this.id,
+      required this.total,
+      required this.date,
+      required this.state,
+      required this.propine,
+      required this.waitersId,
+      required this.tableId});
+}

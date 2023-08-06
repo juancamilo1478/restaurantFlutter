@@ -81,167 +81,169 @@ class _AddWaitersState extends State<AddWaiters> {
           ],
         ),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text('Nombre'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: _nameController,
-                  maxLength: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      _name = value;
-                    });
-                  },
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Text('Nombre'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Text('Cedula'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: TextField(
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  controller: _cedulecontroller,
-                  maxLength: 15,
-                  onChanged: (value) {
-                    setState(() {
-                      _cedule = value;
-                    });
-                  },
+                Container(
+                  width: 200,
+                  child: TextField(
+                    controller: _nameController,
+                    maxLength: 40,
+                    onChanged: (value) {
+                      setState(() {
+                        _name = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Text('Cedula'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Text('Direccion'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: _directioncontroller,
-                  maxLength: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      _direction = value;
-                    });
-                  },
+                Container(
+                  width: 200,
+                  child: TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    controller: _cedulecontroller,
+                    maxLength: 15,
+                    onChanged: (value) {
+                      setState(() {
+                        _cedule = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Text('Direccion'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Text('Celular'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: _phonecontroller,
-                  maxLength: 15,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _phone = value;
-                    });
-                  },
+                Container(
+                  width: 200,
+                  child: TextField(
+                    controller: _directioncontroller,
+                    maxLength: 40,
+                    onChanged: (value) {
+                      setState(() {
+                        _direction = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Text('Celular'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Text('Eps'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: _epscontroller,
-                  maxLength: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      _eps = value;
-                    });
-                  },
+                Container(
+                  width: 200,
+                  child: TextField(
+                    controller: _phonecontroller,
+                    maxLength: 15,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _phone = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Text('Eps'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Text('Categoria'),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                width: 200,
-                child: DropdownButton<String>(
-                  value: _selectCategorie,
-                  items: [
-                    DropdownMenuItem(
-                      value: 'Waiter',
-                      child: Text('Mesero'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'lifeJacket',
-                      child: Text('Salvavidas'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'chef',
-                      child: Text('Cocina'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'checker',
-                      child: Text('Caja'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'other',
-                      child: Text('otros'),
-                    ),
-                  ],
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectCategorie = value!;
-                    });
-                  },
+                Container(
+                  width: 200,
+                  child: TextField(
+                    controller: _epscontroller,
+                    maxLength: 40,
+                    onChanged: (value) {
+                      setState(() {
+                        _eps = value;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                Text('Categoria'),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          ElevatedButton(
-              onPressed: () async {
-                final imagen = await getImage();
+                Container(
+                  width: 200,
+                  child: DropdownButton<String>(
+                    value: _selectCategorie,
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Waiter',
+                        child: Text('Mesero'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'lifeJacket',
+                        child: Text('Salvavidas'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'chef',
+                        child: Text('Cocina'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'checker',
+                        child: Text('Caja'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'other',
+                        child: Text('otros'),
+                      ),
+                    ],
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectCategorie = value!;
+                      });
+                    },
+                  ),
+                )
+              ],
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  final imagen = await getImage();
 
-                setState(() {
-                  imagen_upload = File(imagen!.path);
-                });
-              },
-              child: Text('Subir imagen')),
-          imagen_upload != null ? Image.file(imagen_upload!) : Container()
-        ],
+                  setState(() {
+                    imagen_upload = File(imagen!.path);
+                  });
+                },
+                child: Text('Subir imagen')),
+            imagen_upload != null ? Image.file(imagen_upload!) : Container()
+          ],
+        ),
       ),
       actions: [
         TextButton(
