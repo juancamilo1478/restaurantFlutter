@@ -159,6 +159,9 @@ class _AccountScreenState extends State<AccountScreen> {
                     width: 20,
                   ),
                   Text('agregar Productos  '),
+                  SizedBox(
+                    width: 20,
+                  ),
                   InkWell(
                     onTap: () async {
                       final account = await showDialog(
@@ -197,7 +200,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     },
                     child: Icon(
                       Icons.add_circle_outline_outlined,
-                      size: 20,
+                      size: 40,
+                      color: Colors.green,
                     ),
                   ),
                   FutureBuilder<WaiterModel>(
@@ -318,7 +322,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   onPressed: () {
                     // String? direction = await selectFolder();
                     printAccount(context, account, percent, widget.nameSector,
-                        widget.accountId);
+                        widget.accountId, widget.nameTable);
                   },
                 ),
                 ElevatedButton(
@@ -336,11 +340,10 @@ class _AccountScreenState extends State<AccountScreen> {
                     ],
                   ),
                   onPressed: () async {
-                    print(account.tableId);
                     final Result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => pay(),
+                          builder: (context) => pay(total: _total),
                         ));
                     final stateFinish = await finishAccount(
                         widget.accountId, account.tableId, Result, propine);

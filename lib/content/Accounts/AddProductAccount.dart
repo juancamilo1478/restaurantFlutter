@@ -162,7 +162,11 @@ class _addProductAccountstate extends State<addProductAccount> {
               await _addProduct(product.id);
               Navigator.of(context).pop();
             },
-            child: Icon(Icons.add_circle_outline_sharp))),
+            child: Icon(
+              Icons.add_circle_outline_sharp,
+              size: 25,
+              color: Colors.green,
+            ))),
       ]);
     }).toList();
   }

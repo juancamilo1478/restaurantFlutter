@@ -5,7 +5,7 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 
 void printAccount(BuildContext context, AccountModel data, num porcent,
-    String nameTable, int idAccount) async {
+    String namesector, int idAccount, String nameTable) async {
   final pdf = pw.Document();
 
   final image = await imageFromAssetBundle('assets/images/logo1.png');
@@ -13,7 +13,7 @@ void printAccount(BuildContext context, AccountModel data, num porcent,
     pw.Page(
       build: (pw.Context context) {
         return buildprintData(
-            image, data.products, porcent, nameTable, idAccount);
+            image, data.products, porcent, namesector, idAccount, nameTable);
       },
       pageFormat: PdfPageFormat(130.0, double.infinity),
     ),
@@ -59,7 +59,7 @@ void printAccount(BuildContext context, AccountModel data, num porcent,
 }
 
 pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
-    String nametable, int idAccount) {
+    String nameSector, int idAccount, String nameTable) {
   int total = 0;
 
   for (var product in datas) {
@@ -71,7 +71,10 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
   return pw.Center(
     child: pw.Column(
       children: [
-        pw.Text('Mesa $nametable #$idAccount',
+        pw.Text('Mesa $nameSector #$nameTable',
+            style: pw.TextStyle(fontSize: fontSize)),
+        pw.SizedBox(height: 2.0),
+        pw.Text('id cuenta  #$idAccount',
             style: pw.TextStyle(fontSize: fontSize)),
         pw.SizedBox(height: 10.0),
         pw.Divider(),
@@ -215,7 +218,7 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
                   'Total:',
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
-                    fontSize: fontSize * 2,
+                    fontSize: fontSize * 1,
                   ),
                 ),
               ),
@@ -226,7 +229,7 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
                   total.toString(),
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
-                    fontSize: fontSize * 2,
+                    fontSize: fontSize * 1,
                   ),
                 ),
               ),
@@ -238,7 +241,7 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
                 alignment: pw.Alignment.bottomCenter,
                 padding: pw.EdgeInsets.only(top: 5, bottom: 5),
                 child: pw.Text(
-                  'Propina voluntaria $porcent %:',
+                  'Propina voluntaria ${porcent.toInt()} %:',
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
                     fontSize: fontSize * 1,
@@ -249,7 +252,7 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
                 alignment: pw.Alignment.bottomCenter,
                 padding: pw.EdgeInsets.only(top: 5, bottom: 5),
                 child: pw.Text(
-                  (total * (porcent / 100)).toString(),
+                  ((total * (porcent / 100)).toInt()).toString(),
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
                     fontSize: fontSize * 1,
@@ -267,21 +270,29 @@ pw.Widget buildprintData(image, List<ProductAccount> datas, num porcent,
                   'Total+propina:',
                   style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
-                    fontSize: fontSize * 1,
+                    fontSize: fontSize * 1.4,
                   ),
                 ),
               ),
               pw.Container(
-                alignment: pw.Alignment.bottomCenter,
-                padding: pw.EdgeInsets.only(top: 5, bottom: 5),
-                child: pw.Text(
-                  (total + (total * (porcent / 100))).toString(),
-                  style: pw.TextStyle(
-                    fontWeight: pw.FontWeight.bold,
-                    fontSize: fontSize * 1.8,
-                  ),
-                ),
-              ),
+                  alignment: pw.Alignment.bottomCenter,
+                  padding: pw.EdgeInsets.only(top: 5, bottom: 5),
+                  child: pw.Row(children: [
+                    pw.Text(
+                      ' \$',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: fontSize * 1.5,
+                      ),
+                    ),
+                    pw.Text(
+                      ((total + (total * (porcent / 100))).toInt()).toString(),
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: fontSize * 1.5,
+                      ),
+                    ),
+                  ])),
             ],
           ),
         ])

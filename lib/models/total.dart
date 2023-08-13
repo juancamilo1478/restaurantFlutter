@@ -26,46 +26,37 @@ class MenuItem {
   }
 }
 
-class MenuCategory {
-  final List<MenuItem> card;
-  final List<MenuItem> effective;
-
-  MenuCategory({
-    required this.card,
-    required this.effective,
-  });
-
-  factory MenuCategory.fromJson(Map<String, dynamic> json) {
-    return MenuCategory(
-      card: (json['card'] as List)
-          .map((item) => MenuItem.fromJson(item))
-          .toList(),
-      effective: (json['Efective'] as List)
-          .map((item) => MenuItem.fromJson(item))
-          .toList(),
-    );
-  }
-}
-
 class RestaurantModel {
-  final MenuCategory restaurant;
-  final MenuCategory iceCream;
-  final MenuCategory sweet;
-  final MenuCategory other;
-
-  RestaurantModel({
-    required this.restaurant,
-    required this.iceCream,
-    required this.sweet,
-    required this.other,
-  });
+  final List<MenuItem> restaurant;
+  final List<MenuItem> iceCream;
+  final List<MenuItem> sweet;
+  final List<MenuItem> other;
+  final int card;
+  final int box;
+  RestaurantModel(
+      {required this.restaurant,
+      required this.iceCream,
+      required this.sweet,
+      required this.other,
+      required this.box,
+      required this.card});
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
     return RestaurantModel(
-      restaurant: MenuCategory.fromJson(json['Restaurant']),
-      iceCream: MenuCategory.fromJson(json['IceCream']),
-      sweet: MenuCategory.fromJson(json['Sweet']),
-      other: MenuCategory.fromJson(json['Other']),
+      restaurant: (json['Restaurant'] as List)
+          .map((item) => MenuItem.fromJson(item))
+          .toList(),
+      iceCream: (json['IceCream'] as List)
+          .map((item) => MenuItem.fromJson(item))
+          .toList(),
+      sweet: (json['Sweet'] as List)
+          .map((item) => MenuItem.fromJson(item))
+          .toList(),
+      other: (json['Other'] as List)
+          .map((item) => MenuItem.fromJson(item))
+          .toList(),
+      card: json['card'], // Agregado el campo 'card' desde el JSON
+      box: json['box'],
     );
   }
 }
