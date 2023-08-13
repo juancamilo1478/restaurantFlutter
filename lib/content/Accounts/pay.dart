@@ -99,7 +99,7 @@ class _payState extends State<pay> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Acción que deseas realizar cuando se haga clic en el botón
-                    Navigator.pop(context, {box: box, card: card});
+                    Navigator.pop(context, {'box': box, 'card': card});
                   },
                   child: Text("Archivar"),
                 ),

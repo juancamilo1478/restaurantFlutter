@@ -346,10 +346,16 @@ class _AccountScreenState extends State<AccountScreen> {
                           builder: (context) => pay(total: _total),
                         ));
                     final stateFinish = await finishAccount(
-                        widget.accountId, account.tableId, Result, propine);
+                        widget.accountId,
+                        account.tableId,
+                        Result['box'] ?? 0,
+                        Result['card'] ?? 0,
+                        propine);
                     if (stateFinish == 'Completado') {
                       Navigator.of(context).pop();
-                    } else {}
+                    } else {
+                      print("error");
+                    }
                   },
                 ),
                 TextButton(

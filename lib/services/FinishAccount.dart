@@ -4,7 +4,8 @@ import 'dart:convert';
 Future<String> finishAccount(
   int idAccount,
   int idTable,
-  String type,
+  num box,
+  num card,
   num propine,
 ) async {
   // int box, int card
@@ -13,11 +14,10 @@ Future<String> finishAccount(
     url,
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
-      'type': type,
       'idAccount': idAccount,
       'idTable': idTable,
-      'box': 0,
-      'card': 0,
+      'box': box.toInt(),
+      'card': card.toInt(),
       'propine': propine
     }),
   );
