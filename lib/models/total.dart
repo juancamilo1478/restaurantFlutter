@@ -21,7 +21,7 @@ class MenuItem {
       name: json['name'],
       price: json['price'],
       type: json['type'],
-      quantity: json['quantiti'],
+      quantity: json['quantity'],
     );
   }
 }

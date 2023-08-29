@@ -14,6 +14,7 @@ class winnings extends StatefulWidget {
 class _winningsState extends State<winnings> {
   List<Widget> listWidyed = [];
   DateTime? selectedDate;
+  int propines = 0;
   RestaurantModel? totalDatas;
   num totalEfective = 0;
   num totalCard = 0;
@@ -25,7 +26,8 @@ class _winningsState extends State<winnings> {
     });
   }
 
-  void _myFunction(RestaurantModel data, List<Propines> propinesList) {
+  void _myFunction(
+      RestaurantModel data, List<Propines> propinesList, int propines) {
     setState(() {
       listWidyed = [];
     });
@@ -60,8 +62,8 @@ class _winningsState extends State<winnings> {
     listWidyed.addAll(data2);
     listWidyed.addAll(data3);
     listWidyed.addAll(data4);
-    Widget finish = totalDate(
-        data.box, data.card, _totalIceCream, _totalSweet, _totalOther);
+    Widget finish = totalDate(data.box, data.card, _totalIceCream, _totalSweet,
+        _totalOther, propines);
     listWidyed.addAll([finish]);
     listWidyed.addAll([propine]);
   }
@@ -165,8 +167,26 @@ class _winningsState extends State<winnings> {
       body: jsonEncode(requestData),
       headers: {'Content-Type': 'application/json'},
     );
+    final urlAllpropines =
+        Uri.parse('http://localhost:3001/waiter/day/allpropines');
+    final responseallpropines = await http.put(
+      urlAllpropines,
+      body: jsonEncode(requestData),
+      headers: {'Content-Type': 'application/json'},
+    );
 
-    if (response.statusCode == 200 && responsewaiter.statusCode == 200) {
+    if (response.statusCode == 200 &&
+        responsewaiter.statusCode == 200 &&
+        responseallpropines.statusCode == 200) {
+      Map<String, dynamic> responseData = jsonDecode(responseallpropines.body);
+      if (responseData.containsKey('total')) {
+        // print(responseData['total']);
+        setState(() {
+          propines = responseData['total'];
+        });
+      } else {
+        print('Total not found in response');
+      }
       final jsonData = jsonDecode(response.body);
       final jsonDataWaiter = jsonDecode(responsewaiter.body);
       setState(() {
@@ -177,7 +197,8 @@ class _winningsState extends State<winnings> {
           List<Propines> propinesList = jsonDataWaiter
               .map<Propines>((item) => Propines(item['name'], item['propine']))
               .toList();
-          _myFunction(RestaurantModel.fromJson(jsonData), propinesList);
+          _myFunction(
+              RestaurantModel.fromJson(jsonData), propinesList, propines);
         }
       });
     } else {
@@ -297,7 +318,7 @@ class _winningsState extends State<winnings> {
   }
 
   Widget totalDate(num totalEfective, num totalCard, num totalIceCream,
-      num totalSweet, num totalOther) {
+      num totalSweet, num totalOther, int propines) {
     return DataTable(
       columns: [
         DataColumn(label: Text(' ')),
@@ -326,17 +347,22 @@ class _winningsState extends State<winnings> {
           DataCell(Text("-" + totalOther.toString())),
         ]),
         DataRow(cells: [
+          DataCell(Text("Propinas")),
+          DataCell(Text("...")),
+          DataCell(Text("-" + propines.toString())),
+        ]),
+        DataRow(cells: [
           DataCell(Text("Total")),
           DataCell(Text(totalCard.toString())),
-          DataCell(Text(
-              (totalEfective - (totalIceCream + totalOther + totalSweet))
-                  .toString())),
+          DataCell(Text((totalEfective -
+                  (totalIceCream + totalOther + totalSweet + propines))
+              .toString())),
         ]),
         DataRow(cells: [
           DataCell(Text("Recaudo")),
           DataCell(Text("...")),
           DataCell(Text(((totalEfective + totalCard) -
-                  (totalIceCream + totalOther + totalSweet))
+                  (totalIceCream + totalOther + totalSweet + propines))
               .toString())),
         ])
       ],

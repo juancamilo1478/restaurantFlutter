@@ -18,7 +18,7 @@ Future<String> finishAccount(
       'idTable': idTable,
       'box': box.toInt(),
       'card': card.toInt(),
-      'propine': propine
+      'propine': propine.toInt()
     }),
   );
   if (response.statusCode == 200) {

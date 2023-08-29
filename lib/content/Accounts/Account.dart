@@ -343,14 +343,16 @@ class _AccountScreenState extends State<AccountScreen> {
                     final Result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => pay(total: _total),
+                          builder: (context) =>
+                              pay(total: _total, propine: propine.toInt()),
                         ));
                     final stateFinish = await finishAccount(
-                        widget.accountId,
-                        account.tableId,
-                        Result['box'] ?? 0,
-                        Result['card'] ?? 0,
-                        propine);
+                      widget.accountId,
+                      account.tableId,
+                      Result['box'] ?? 0,
+                      Result['card'] ?? 0,
+                      Result['propine'] ?? 0,
+                    );
                     if (stateFinish == 'Completado') {
                       Navigator.of(context).pop();
                     } else {

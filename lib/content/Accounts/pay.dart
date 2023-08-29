@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 
 class pay extends StatefulWidget {
   final num total;
-  pay({required this.total});
+  final int propine;
+  pay({required this.total, required this.propine});
   @override
   State<pay> createState() => _payState();
 }
@@ -38,7 +39,7 @@ class _payState extends State<pay> {
             SizedBox(
               height: 50,
               child: Text(
-                "Total: ${widget.total}",
+                "Total: ${widget.total}+pripina ${widget.propine}=${widget.total + widget.propine}",
                 style: TextStyle(fontSize: 30),
               ),
             ),
@@ -93,13 +94,14 @@ class _payState extends State<pay> {
                 ],
               ),
             ),
-            if (widget.total == card + box)
+            if (widget.total + widget.propine == card + box)
               Padding(
                 padding: const EdgeInsets.all(40.0),
                 child: ElevatedButton(
                   onPressed: () {
                     // Acción que deseas realizar cuando se haga clic en el botón
-                    Navigator.pop(context, {'box': box, 'card': card});
+                    Navigator.pop(context,
+                        {'box': box, 'card': card, 'propine': widget.propine});
                   },
                   child: Text("Archivar"),
                 ),
