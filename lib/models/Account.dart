@@ -42,7 +42,8 @@ class AccountModel {
 
 class AccountBasic {
   int id;
-  String total;
+  String box;
+  String card;
   String date;
   String state;
   String propine;
@@ -50,10 +51,22 @@ class AccountBasic {
   int tableId;
   AccountBasic(
       {required this.id,
-      required this.total,
+      required this.card,
+      required this.box,
       required this.date,
       required this.state,
       required this.propine,
       required this.waitersId,
       required this.tableId});
+}
+
+class AccountsPage {
+  List<AccountModel> accounts;
+  int totalPages;
+  int currentPage;
+  AccountsPage({
+    required this.accounts,
+    required this.totalPages,
+    required this.currentPage,
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/Responsive/table.dart';
 import 'package:flutter_restaurant/constant/constant.dart';
+import 'package:flutter_restaurant/content/history/history.dart';
 import 'package:flutter_restaurant/content/inventory/inventory.dart';
 import 'package:flutter_restaurant/content/tables/index.dart';
 import 'package:flutter_restaurant/content/waiters/index.dart';
@@ -15,7 +16,13 @@ class Deskatop extends StatefulWidget {
 
 class _DeskatopState extends State<Deskatop> {
   int _selectedPage = 1;
-  List<Widget> _pages = [inventory(), Tables(), winnings(), waiters()];
+  List<Widget> _pages = [
+    inventory(),
+    Tables(),
+    winnings(),
+    waiters(),
+    historyAccounts()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +74,14 @@ class _DeskatopState extends State<Deskatop> {
                   title: Text('M E S E R O S'),
                   onTap: () => setState(() {
                     _selectedPage = 3;
+                  }),
+                ),
+                ListTile(
+                  tileColor: _selectedPage == 3 ? Colors.blue[200] : null,
+                  leading: Icon(Icons.history),
+                  title: Text('H I S T O R I A L'),
+                  onTap: () => setState(() {
+                    _selectedPage = 4;
                   }),
                 ),
               ],
