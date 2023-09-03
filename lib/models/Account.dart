@@ -1,5 +1,5 @@
 class ProductAccount {
-  int id;
+  String id;
   String type;
   String name;
   int price;
@@ -20,7 +20,6 @@ class ProductAccount {
 
 class AccountModel {
   int id;
-  String total;
   String date;
   String state;
   String propine;
@@ -30,7 +29,6 @@ class AccountModel {
 
   AccountModel({
     required this.id,
-    required this.total,
     required this.date,
     required this.state,
     required this.propine,

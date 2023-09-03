@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 
 class EditInventoryDialog extends StatefulWidget {
-  final int productId;
+  final String productId;
   final String productName;
   final String productType;
   final String productPrice;

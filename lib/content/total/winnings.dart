@@ -79,9 +79,9 @@ class _winningsState extends State<winnings> {
               onPressed: () async {
                 await _selectDate(context);
                 await _getDatas(
-                    '${selectedDate!.year}/${selectedDate!.month}/${selectedDate!.day}');
+                    '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}');
                 _getPoolWidyed(
-                    '${selectedDate!.year}/${selectedDate!.month}/${selectedDate!.day}');
+                    '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}');
               },
               child: Text('Seleccionar fecha'),
             ),

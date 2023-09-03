@@ -70,7 +70,6 @@ class _inventoryState extends State<inventory> {
                   if (snapshot.hasData) {
                     return DataTable(
                       columns: [
-                        DataColumn(label: Text('id')),
                         DataColumn(label: Text('Nombre')),
                         DataColumn(label: Text('Inventario')),
                         DataColumn(label: Text('´Precio')),
@@ -106,7 +105,6 @@ class _inventoryState extends State<inventory> {
   List<DataRow> _products(List<Product> products) {
     return products.map((product) {
       return DataRow(cells: [
-        DataCell(Text(product.id.toString())),
         DataCell(Text(product.name)),
         DataCell(Text(product.inventory.toString())),
         DataCell(Text(product.price.toString())),

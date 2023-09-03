@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class MenuItem {
-  final int id;
+  final String id;
   final String name;
   final int price;
   final String type;
@@ -17,7 +17,7 @@ class MenuItem {
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
     return MenuItem(
-      id: json['id'],
+      id: json['id'].toString(),
       name: json['name'],
       price: json['price'],
       type: json['type'],

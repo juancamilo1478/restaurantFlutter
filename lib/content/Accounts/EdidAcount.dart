@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_restaurant/models/product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -7,7 +8,7 @@ class EditDialog extends StatefulWidget {
   final int initialQuantity;
   final String nameProduct;
   final int idAccount;
-  final int idProduct;
+  final String idProduct;
   const EditDialog(
       {Key? key,
       required this.initialQuantity,
@@ -53,23 +54,88 @@ class _EditDialogState extends State<EditDialog> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final url = Uri.http('localhost:3001', '/accounts/product');
-              final response = await http.put(
-                url,
-                headers: {'Content-Type': 'application/json'},
-                body: jsonEncode({
-                  'accountId': widget.idAccount,
-                  'productId': widget.idProduct,
-                  'quantity': quantity,
-                }),
-              );
-
-              if (response.statusCode == 201) {
-                print('ok');
-                Navigator.of(context).pop();
-              } else {
-                print(response.body);
-                Navigator.of(context).pop();
+              try {
+                final url = Uri.http('localhost:3001', '/accounts/product');
+                final response = await http.put(
+                  url,
+                  headers: {'Content-Type': 'application/json'},
+                  body: jsonEncode({
+                    'accountId': widget.idAccount,
+                    'productId': widget.idProduct,
+                    'quantity': quantity,
+                    'oldQuantity': widget.initialQuantity
+                  }),
+                );
+                if (response.statusCode == 201) {
+                  String body = utf8.decode(response.bodyBytes);
+                  Product? productStore;
+                  final jsonData = jsonDecode(body);
+                  productStore = Product(
+                    jsonData['id'].toString(),
+                    jsonData['type'],
+                    jsonData['name'],
+                    jsonData['price'].toString(),
+                    jsonData['store'].toString(),
+                  );
+                  if (int.parse(productStore.inventory) > 5) {
+                    Navigator.of(context).pop();
+                  }
+                  if (int.parse(productStore.inventory) <= 5) {
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Row(
+                            children: [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.yellow,
+                              ),
+                              Text("Alerta"),
+                            ],
+                          ),
+                          content: Text(
+                              "Quedan pocas unidades de ${productStore!.name} # de unidades: ${productStore.inventory}"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(); // Cerrar el AlertDialog
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Aceptar"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    // Espera hasta que el usuario cierre el diálogo antes de continuar
+                  }
+                } else {
+                  throw Exception(
+                      "Fallo la petición: ${jsonDecode(response.body)['error']}");
+                }
+              } catch (e) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Error"),
+                      content:
+                          Text("Se produjo un error al cargar los datos: $e"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pop(); // Cerrar el AlertDialog
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("Aceptar"),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
             },
             child: Text('Guardar'),

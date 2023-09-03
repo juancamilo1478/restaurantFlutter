@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Widget deleteProductAccount(
-    BuildContext context, String nameProduct, int idProduct, int idAccount) {
+    BuildContext context, String nameProduct, String idProduct, int idAccount) {
   String dialogue = '¿Seguro que quieres borrar el producto $nameProduct?';
 
   return AlertDialog(

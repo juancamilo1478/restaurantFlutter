@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 class editAccountHistory extends StatefulWidget {
   final int idAccount;
   final String date;
-  const editAccountHistory({required this.idAccount, required this.date});
+  final String state;
+  const editAccountHistory(
+      {required this.idAccount, required this.date, required this.state});
 
   @override
   State<editAccountHistory> createState() => _editAccountHistoryState();
@@ -50,7 +52,6 @@ class _editAccountHistoryState extends State<editAccountHistory> {
       }
       final account = AccountModel(
         id: jsonData['id'],
-        total: jsonData['total'].toString(),
         date: jsonData['date'].toString(),
         state: jsonData['state'].toString(),
         propine: jsonData['propine'].toString(),
@@ -207,24 +208,54 @@ class _editAccountHistoryState extends State<editAccountHistory> {
                     ],
                   ),
                   onPressed: () async {
-                    final Result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => pay(
-                              total: box + card - propine,
-                              propine: propine.toInt()),
-                        ));
-                    final stateFinish = await finishAccount(
-                      widget.idAccount,
-                      account.tableId,
-                      Result['box'] ?? 0,
-                      Result['card'] ?? 0,
-                      Result['propine'] ?? 0,
-                    );
-                    if (stateFinish == 'Completado') {
-                      Navigator.of(context).pop();
+                    if (widget.state != "Active") {
+                      final Result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => pay(
+                                total: box + card - propine,
+                                propine: propine.toInt()),
+                          ));
+                      final stateFinish = await finishAccount(
+                        widget.idAccount,
+                        account.tableId,
+                        Result['box'] ?? 0,
+                        Result['card'] ?? 0,
+                        Result['propine'] ?? 0,
+                      );
+                      if (stateFinish == 'Completado') {
+                        Navigator.of(context).pop();
+                      } else {
+                        print("error");
+                      }
                     } else {
-                      print("error");
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Row(
+                              children: [
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: Colors.yellow,
+                                ),
+                                Text("Alerta"),
+                              ],
+                            ),
+                            content: Text(
+                                "No puedes Editar el pago en una cuenta activa"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Cerrar el AlertDialog
+                                },
+                                child: Text("Aceptar"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   },
                 ),

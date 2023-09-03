@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
 Widget showDeleteProductDialog(
-    BuildContext context, int productId, String productName) {
+    BuildContext context, String productId, String productName) {
   String dialogue = '¿Seguro que quieres borrar el producto $productName?';
 
   return AlertDialog(

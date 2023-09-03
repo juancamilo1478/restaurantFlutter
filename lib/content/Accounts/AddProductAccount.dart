@@ -36,7 +36,7 @@ class _addProductAccountstate extends State<addProductAccount> {
 
       for (var item in jsonData) {
         productos.add(Product(
-          item['id'],
+          item['id'].toString(),
           item['type'],
           item['name'],
           item['price'].toString(),
@@ -49,17 +49,81 @@ class _addProductAccountstate extends State<addProductAccount> {
     }
   }
 
-  _addProduct(int idProduct) async {
-    final Uri url = Uri.parse('http://localhost:3001/accounts/product');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "accountId": widget.idAccount,
-        "productId": idProduct,
-        "quantity": quantity == '' ? 1 : quantity
-      }),
-    );
+  _addProduct(String idProduct) async {
+    try {
+      final Uri url = Uri.parse('http://localhost:3001/accounts/product');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "accountId": widget.idAccount,
+          "productId": idProduct,
+          "quantity": quantity == '' ? 1 : quantity
+        }),
+      );
+      if (response.statusCode == 201) {
+        String body = utf8.decode(response.bodyBytes);
+        Product? productStore;
+        final jsonData = jsonDecode(body);
+        productStore = Product(
+          jsonData['id'].toString(),
+          jsonData['type'],
+          jsonData['name'],
+          jsonData['price'].toString(),
+          jsonData['store'].toString(),
+        );
+        if (int.parse(productStore.inventory) <= 5) {
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.yellow,
+                    ),
+                    Text("Alerta"),
+                  ],
+                ),
+                content: Text(
+                    "Quedan pocas unidades de ${productStore!.name} # de unidades: ${productStore.inventory}"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Cerrar el AlertDialog
+                    },
+                    child: Text("Aceptar"),
+                  ),
+                ],
+              );
+            },
+          );
+          // Espera hasta que el usuario cierre el diálogo antes de continuar
+        }
+      } else {
+        throw Exception(
+            "Fallo la petición: ${jsonDecode(response.body)['error']}");
+      }
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("${e}"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar el AlertDialog
+                },
+                child: Text("Aceptar"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -117,7 +181,6 @@ class _addProductAccountstate extends State<addProductAccount> {
                 if (snapshot.hasData) {
                   return DataTable(
                     columns: [
-                      DataColumn(label: Text('id')),
                       DataColumn(label: Text('Nombre')),
                       DataColumn(label: Text('Inventario')),
                       DataColumn(label: Text('Precio')),
@@ -152,7 +215,6 @@ class _addProductAccountstate extends State<addProductAccount> {
   List<DataRow> _products(List<Product> products) {
     return products.map((product) {
       return DataRow(cells: [
-        DataCell(Text(product.id.toString())),
         DataCell(Text(product.name)),
         DataCell(Text(product.inventory.toString())),
         DataCell(Text(product.price.toString())),

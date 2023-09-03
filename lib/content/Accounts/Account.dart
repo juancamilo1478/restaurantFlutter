@@ -53,7 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
       for (var productData in productsData) {
         final product = ProductAccount(
-          id: productData['id'],
+          id: productData['id'].toString(),
           type: productData['type'],
           name: productData['name'],
           price: productData['price'],
@@ -66,7 +66,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
       final account = AccountModel(
         id: jsonData['id'],
-        total: jsonData['total'].toString(),
         date: jsonData['date'].toString(),
         state: jsonData['state'].toString(),
         propine: jsonData['propine'].toString(),
@@ -125,7 +124,7 @@ class _AccountScreenState extends State<AccountScreen> {
           );
         } else if (snapshot.hasError) {
           return AlertDialog(
-            title: Text('Cuenta'),
+            title: Text('Cuenta Error'),
             content: Text('Error: ${snapshot.error}'),
             actions: [
               TextButton(

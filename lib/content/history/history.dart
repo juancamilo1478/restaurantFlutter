@@ -85,7 +85,8 @@ class _historyAccountsState extends State<historyAccounts> {
         });
         return accountslist;
       } else {
-        throw Exception("Fallo la petición: ${response.statusCode}");
+        throw Exception(
+            "Fallo la petición: ${jsonDecode(response.body)['error']}");
       }
     } catch (e) {
       showDialog(
@@ -290,6 +291,7 @@ class _historyAccountsState extends State<historyAccounts> {
                 return editAccountHistory(
                   idAccount: dataAccount.id,
                   date: dataAccount.date,
+                  state: dataAccount.state,
                 );
               },
             );
